@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import VideoPlayer from './components/VideoPlayer';
 import './App.css';
 
 const App = () => {
@@ -13,13 +14,13 @@ const App = () => {
     getVideos();
   }, []);
 
-  useEffect(() => {
-    console.log({videos});
-  }, [videos])
 
   return (
     <div className="App">
       <h1>Lumi Player</h1>
+      {videos.length &&(
+        <VideoPlayer videosList={videos} />
+      )}
     </div>
   );
 }
