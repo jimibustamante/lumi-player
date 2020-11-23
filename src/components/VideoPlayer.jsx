@@ -35,15 +35,18 @@ const VideoPlayer = ({ videosList }) => {
     return list.sort(() => Math.random() - 0.5);
   }, [videosList]);
 
-  const next = useCallback(() => {
+  const next = useCallback(async () => {
     const currentId = playlist.indexOf(playlist.find(v => v.uri === currentVideo.uri));
-    const nextVideo = playlist[currentId + 1]
-    if (nextVideo) {
-      setCurrentVideo(nextVideo);
-    } else {
-      setCurrentVideo(playlist[0]);
+    let nextVideo = playlist[currentId + 1]
+    if (!nextVideo) {
+      nextVideo = playlist[0];
     }
-  }, [playlist, currentVideo]);
+    setCurrentVideo(nextVideo);
+    if (player.current) {
+      player.current.destroy();
+      player.current = null;
+    }
+  }, [playlist, currentVideo, player]);
 
   const goFullscreen = useCallback(async () => {
     if (containerElement.current) {
