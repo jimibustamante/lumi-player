@@ -3,18 +3,32 @@ import Vimeo from '@vimeo/player';
 import styled from 'styled-components';
 
 const VideoContainer = styled.div`
-  position: flex;
+  display: flex;
+  justify-content: center;
+  margin: auto;
   width: 70vw;
+  background-color: black;
   height: auto;
+  iframe {
+    width: 100% !important;
+    background-color: black;
+  }
 `;
 
 const Video = styled.div`
   width: 100%;
+  iframe {
+    width: ${({fullscreen}) => fullscreen ? '100vw !important' : 'inherit'};
+    ${({fullscreen}) => fullscreen ? 'height: 100vh !important' : ''};
+  }
+
 `;
 const VideoPlayer = ({ videosList }) => {
   const player = useRef(null);
+  const containerElement = useRef(null);
   const [playlist, setPlaylist] = useState([]);
   const [currentVideo, setCurrentVideo] = useState(null);
+  const [fullscreen, setFullscreen] = useState(false);
 
   const randomPlaylist = useCallback(() => {
     const list = Object.assign([], videosList);
@@ -31,6 +45,29 @@ const VideoPlayer = ({ videosList }) => {
     }
   }, [playlist, currentVideo]);
 
+  const goFullscreen = useCallback(async () => {
+    if (containerElement.current) {
+      try {
+        await containerElement.current.requestFullscreen()
+        setFullscreen(true);
+      } catch (error) {
+        alert("Your browser doesn't support fullscreen :(");
+      }
+    };
+  }, [containerElement]);
+
+  useEffect(() => {
+    if (containerElement.current) {
+      containerElement.current.addEventListener('fullscreenchange', (event) => {
+        if (document.fullscreenElement) {
+          setFullscreen(true);
+        } else {
+          setFullscreen(false);
+        }
+      }, false)
+    }
+  }, [containerElement])
+
   useEffect(() => {
     setPlaylist(randomPlaylist());
   }, [randomPlaylist]);
@@ -41,7 +78,12 @@ const VideoPlayer = ({ videosList }) => {
 
   useEffect(() => {
     if (!player.current && currentVideo) {
-      player.current = new Vimeo('video');
+      const options = {
+        controls: true,
+        width: 900,
+        autoplay: true,
+      }
+      player.current = new Vimeo('video', options);
       player.current.on('ended', (data) => {
         next();
       });
@@ -53,11 +95,14 @@ const VideoPlayer = ({ videosList }) => {
   }
 
   return (
-    <VideoContainer>
-      {currentVideo && (
-        <Video id='video' data-vimeo-id={getVimeoId(currentVideo)} />
-      )}
-    </VideoContainer>
+    <>
+      <VideoContainer ref={containerElement}>
+        {currentVideo && (
+          <Video id='video' fullscreen={fullscreen} data-vimeo-id={getVimeoId(currentVideo)} />
+        )}
+      </VideoContainer>
+      <button onClick={goFullscreen}>Fullscreen!</button>
+    </>
   )
 };
 

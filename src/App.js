@@ -14,7 +14,6 @@ const App = () => {
     getVideos();
   }, []);
 
-
   return (
     <div className="App">
       <h1>Lumi Player</h1>

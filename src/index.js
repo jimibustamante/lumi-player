@@ -1,5 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+} from "react-router-dom";
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
@@ -7,7 +13,13 @@ import LumiApi from './lib/api';
 window.LumiApi = new LumiApi();
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Router>
+      <Switch>
+        <Router exact path="/" >
+          <App />
+        </Router>
+      </Switch>
+    </Router>
   </React.StrictMode>,
   document.getElementById('root')
 );
