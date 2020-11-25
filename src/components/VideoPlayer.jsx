@@ -1,61 +1,22 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Vimeo from '@vimeo/player';
-import styled from 'styled-components';
-
-const VideoContainer = styled.div`
-  display: flex;
-  margin: 2rem auto;
-  justify-content: center;
-  width: 70vw;
-  background-color: black;
-  height: auto;
-  iframe {
-    width: 100% !important;
-    background-color: black;
-  }
-`;
-
-const Video = styled.div`
-  width: 100%;
-  iframe {
-    width: ${({fullscreen}) => fullscreen ? '100vw !important' : 'inherit'};
-    ${({fullscreen}) => fullscreen ? 'height: 100vh !important' : ''};
-  }
-`;
-
-const List = styled.ul`
-  list-style: none;
-  margin: 3rem 0;
-`;
-const ListElement = styled.li`
-  ${({isPlaying}) => (
-    isPlaying && 'color: #4CAF50'
-  )}
-`;
-
-const Button = styled.button`
-  background-color: #4CAF50; /* Green */
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 0 1rem;
-  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
-  color: white;
-  transition-duration: 0.4s;
-`;
-
+import {
+  VideoContainer,
+  Video,
+  List,
+  ListElement,
+  Button,
+  PlayButton,
+  PauseButton,
+  ToggleContainer,
+} from '../styles/main';
 const VideoPlayer = ({ videosList }) => {
   const player = useRef(null);
   const playlist = useRef(videosList);
   const containerElement = useRef(null);
-  // const [playlist, setPlaylist] = useState([]);
-  
   const [currentVideo, setCurrentVideo] = useState(null);
   const [fullscreen, setFullscreen] = useState(false);
+  const [playing, setPlaying] = useState(false);
 
   const randomPlaylist = useCallback(() => {
     const list = Object.assign([], videosList);
@@ -105,7 +66,7 @@ const VideoPlayer = ({ videosList }) => {
     if (currentVideo) {
       const options = {
         id: getVimeoId(currentVideo),
-        controls: true,
+        controls: false,
         width: 900,
         autoplay: true,
       }
@@ -116,12 +77,22 @@ const VideoPlayer = ({ videosList }) => {
       const onEnded = (data) => {
         next();
       };
+      const onPlaying = () => {
+        setPlaying(true);
+      }
+      const onPause = () => {
+        setPlaying(false);
+      }
       player.current.on('ended', onEnded);
+      player.current.on('playing', onPlaying);
+      player.current.on('pause', onPause);
       player.current.ready(() => {
         player.current.play();
       });
       return (() => {
         player.current.off('ended', onEnded);
+        player.current.off('playing', onPlaying);
+        player.current.off('pause', onPause);
       });
     }
   }, [currentVideo, next]);
@@ -133,6 +104,14 @@ const VideoPlayer = ({ videosList }) => {
   return (
     <>
       <VideoContainer ref={containerElement}>
+        <ToggleContainer>
+          {playing && (
+            <PauseButton size='8rem' onClick={() => player.current.pause()} />
+          )}
+          {!playing && (
+            <PlayButton size='8rem' onClick={() => player.current.play()} />
+          )}
+        </ToggleContainer>
         {currentVideo && (
           <Video id='video' fullscreen={fullscreen} />
         )}

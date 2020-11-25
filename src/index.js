@@ -4,7 +4,6 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link,
 } from "react-router-dom";
 import './index.css';
 import App from './App';
@@ -15,9 +14,12 @@ ReactDOM.render(
   <React.StrictMode>
     <Router>
       <Switch>
-        <Router exact path="/" >
+        <Route exact path="/" >
           <App />
-        </Router>
+        </Route>
+        <Route exact path="/playlists/:playlistId" >
+          <App />
+        </Route>
       </Switch>
     </Router>
   </React.StrictMode>,

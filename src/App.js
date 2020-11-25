@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom';
 import VideoPlayer from './components/VideoPlayer';
 import './App.css';
 
 const App = () => {
+  const { playlistId } = useParams();
   const [videos, setVideos] = useState([]);
+  
   const getVideos = async () => {
-    const resp = await window.LumiApi.getFolderVideos();
+    const resp = await window.LumiApi.getFolderVideos(playlistId);
     if (resp) {
       setVideos(resp);
     }

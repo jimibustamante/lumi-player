@@ -5,11 +5,11 @@ export default class LumiApi {
     this.accessToken = ACCESS_TOKEN;
   }
 
-  getFolderVideos = async (folderName) => {
-    folderName = folderName || '2947384';
+  getFolderVideos = async (folderId) => {
+    folderId = folderId || '2947384';
     try {
       let response = await window.fetch(
-        `https://api.vimeo.com/users/${USER_ID}/projects/${folderName}/videos?sort=alphabetical`,
+        `https://api.vimeo.com/users/${USER_ID}/projects/${folderId}/videos?sort=alphabetical`,
         {
           method: 'GET',
           headers: {
