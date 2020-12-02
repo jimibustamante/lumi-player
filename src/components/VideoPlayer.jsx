@@ -6,119 +6,136 @@ import {
   List,
   ListElement,
   Button,
-  PlayButton,
-  PauseButton,
-  ToggleContainer,
 } from '../styles/main';
+import Controls from './Controls';
+import { usePlayer } from '../contexts/player-context';
+const Buttons = ({setRandomPlaylist, next}) => {
+  const [playerState, dispatch] = usePlayer();
+
+  const goFullscreen = useCallback(() => {
+    dispatch({ type: 'SET_FULLSCREEN', payload: true})
+  }, [dispatch]);
+  return (
+    <>
+      <Button onClick={goFullscreen}>Fullscreen!</Button>
+      <Button onClick={next}>Next</Button>
+      <Button onClick={setRandomPlaylist}>Random</Button>
+    </>
+  )
+}
+
 const VideoPlayer = ({ videosList }) => {
   const player = useRef(null);
   const playlist = useRef(videosList);
-  const containerElement = useRef(null);
+  const [playerState, dispatch] = usePlayer();
+  const { playing, fullscreen, currentVideoId } = playerState;
   const [currentVideo, setCurrentVideo] = useState(null);
-  const [fullscreen, setFullscreen] = useState(false);
-  const [playing, setPlaying] = useState(false);
 
-  const randomPlaylist = useCallback(() => {
+  const setRandomPlaylist = useCallback(() => {
     const list = Object.assign([], videosList);
     playlist.current = list.sort(() => Math.random() - 0.5);
-    setCurrentVideo(playlist.current[0]);
-  }, [videosList, playlist]);
+    dispatch({ type: 'SET_PLAYLIST', payload: playlist.current});
+    dispatch({ type: 'SET_CURRENT_VIDEO_ID', payload: playlist.current[0].uri});
+  }, [videosList, playlist, dispatch]);
 
   const next = useCallback(async () => {
-    const currentId = playlist.current.indexOf(playlist.current.find(v => v.uri === currentVideo.uri));
-    let nextVideo = playlist.current[currentId + 1]
+    console.log('next')
+    await player.current.pause();
+    const currentIndex = playlist.current.indexOf(playlist.current.find(v => v.uri === currentVideoId));
+    console.log({currentIndex})
+    let nextVideo = playlist.current[currentIndex + 1]
+    console.log({nextVideo: nextVideo.name})
     if (!nextVideo) {
       nextVideo = playlist.current[0];
     }
-    setCurrentVideo(nextVideo);
-  }, [playlist, currentVideo]);
+    dispatch({ type: 'SET_CURRENT_VIDEO_ID', payload: nextVideo.uri})
+  }, [playlist, currentVideoId, dispatch]);
 
-  const goFullscreen = useCallback(async () => {
-    if (containerElement.current) {
-      try {
-        await containerElement.current.requestFullscreen()
-        setFullscreen(true);
-      } catch (error) {
-        alert("Your browser doesn't support fullscreen :(");
-      }
-    };
-  }, [containerElement]);
-
-  // Fullscreen
-  useEffect(() => {
-    if (containerElement.current) {
-      containerElement.current.addEventListener('fullscreenchange', (event) => {
-        if (document.fullscreenElement) {
-          setFullscreen(true);
-        } else {
-          setFullscreen(false);
-        }
-      }, false)
+  const onVideoChange = useCallback(() => {
+    console.log('onVideoChange', currentVideoId)
+    if (!currentVideo || (currentVideo.uri !== currentVideoId)) {
+      const newVideo = playlist.current.find(v => v.uri === currentVideoId)
+      if (newVideo) setCurrentVideo(newVideo);
     }
-  }, [containerElement])
+  }, [currentVideo, currentVideoId, playlist]);
+
+  const changeVideo = useCallback(async () => {
+    console.log({changeVideo: currentVideo.name})
+    console.log({player: player.current});
+    const currentId = await player.current.getVideoId();
+    if (currentId === getVimeoId(currentVideo)) return;
+    await player.current.pause();
+    await player.current.unload();
+    await player.current.loadVideo(getVimeoId(currentVideo));    
+  }, [player, currentVideo]);
 
   useEffect(() => {
-    randomPlaylist();
-    // setCurrentVideo(playlist.current[0]);
-  }, [randomPlaylist]);
+    onVideoChange();
+  }, [onVideoChange, currentVideoId]);
+
+  useEffect(() => {
+    setRandomPlaylist();
+  }, [setRandomPlaylist]);
+
+  useEffect(() => {
+    if (player.current) {
+      if (playing) player.current.play();
+      if (!playing) player.current.pause();
+    }
+  }, [playing]);
 
   useEffect(() => {
     if (currentVideo) {
       const options = {
         id: getVimeoId(currentVideo),
-        controls: false,
+        controls: true,
         width: 900,
         autoplay: true,
       }
       if (!player.current) {
         player.current = new Vimeo('video', options);
+      } else {
+        changeVideo();
       }
-      player.current.loadVideo(getVimeoId(currentVideo))
       const onEnded = (data) => {
+        console.log('ended')
         next();
       };
       const onPlaying = () => {
-        setPlaying(true);
+        dispatch({type: 'PLAY'});
       }
       const onPause = () => {
-        setPlaying(false);
+        dispatch({type: 'PAUSE'});
+      }
+      const onLoaded = () => {
+        player.current.play();
       }
       player.current.on('ended', onEnded);
       player.current.on('playing', onPlaying);
       player.current.on('pause', onPause);
-      player.current.ready(() => {
-        player.current.play();
-      });
+      player.current.on('loaded', onLoaded);
       return (() => {
         player.current.off('ended', onEnded);
         player.current.off('playing', onPlaying);
         player.current.off('pause', onPause);
-      });
+        player.current.off('loaded', onLoaded);
+    });
     }
-  }, [currentVideo, next]);
+  }, [currentVideo, next, changeVideo]);
 
   function getVimeoId({uri}) {
     return uri.split('/videos/')[1];
   }
-
+  
   return (
     <>
-      <VideoContainer ref={containerElement}>
-        <ToggleContainer>
-          {playing && (
-            <PauseButton size='8rem' onClick={() => player.current.pause()} />
-          )}
-          {!playing && (
-            <PlayButton size='8rem' onClick={() => player.current.play()} />
-          )}
-        </ToggleContainer>
+      <VideoContainer fullscreen={fullscreen} >
+        <Controls />
         {currentVideo && (
           <Video id='video' fullscreen={fullscreen} />
         )}
       </VideoContainer>
-      <Button onClick={goFullscreen}>Fullscreen!</Button>
-      <Button onClick={next}>Next</Button>
-      <Button onClick={randomPlaylist}>Random</Button>
+      <Buttons setRandomPlaylist={setRandomPlaylist} next={next} />
       {playlist.current && (
         <List>
           {playlist.current.map((video) => {

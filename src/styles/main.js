@@ -1,14 +1,13 @@
 import styled from 'styled-components';
 import { BiPlay as Play, BiPause as Pause } from 'react-icons/bi';
-
 const mainColor = '#4CAF50';
 
 export const VideoContainer = styled.div`
   position: relative;
   display: flex;
-  margin: 2rem auto;
+  margin: ${({fullscreen}) => fullscreen ? '0' : '2rem auto'};
   justify-content: center;
-  width: 70vw;
+  width: ${({fullscreen}) => fullscreen ? '100vw' : '70vw'};
   background-color: black;
   height: auto;
   iframe {
