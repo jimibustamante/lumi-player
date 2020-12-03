@@ -9,12 +9,18 @@ const Fullscreenable = ({ children }) => {
   const goFullscreen = useCallback(async () => {
     if (fullscreenContent.current) {
       try {
-        await fullscreenContent.current.requestFullscreen()
+        await fullscreenContent.current.requestFullscreen();
       } catch (error) {
         console.log({error});
         alert("Your browser doesn't support fullscreen :(");
       }
     };
+  }, [fullscreenContent]);
+
+  const exitFullscreen = useCallback(() => {
+    if (fullscreenContent.current && document.fullscreenElement) {
+      document.exitFullscreen();
+    }
   }, [fullscreenContent]);
 
   const onFullscreenChange = useCallback(() => {
@@ -38,8 +44,10 @@ const Fullscreenable = ({ children }) => {
   useEffect(() => {
     if (fullscreen) {
       goFullscreen();
+    } else {
+      exitFullscreen();
     }
-  }, [fullscreen, goFullscreen]);
+  }, [fullscreen, goFullscreen, exitFullscreen]);
 
   return (
     <div ref={fullscreenContent}>

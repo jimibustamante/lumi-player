@@ -26,11 +26,11 @@ const Buttons = ({setRandomPlaylist, next}) => {
 
 const VideoPlayer = ({ videosList }) => {
   const player = useRef(null);
+  const videoRef = useRef(null);
   const playlist = useRef(videosList);
   const [playerState, dispatch] = usePlayer();
   const { playing, fullscreen, currentVideoId } = playerState;
   const [currentVideo, setCurrentVideo] = useState(null);
-
   const setRandomPlaylist = useCallback(() => {
     const list = Object.assign([], videosList);
     playlist.current = list.sort(() => Math.random() - 0.5);
@@ -88,7 +88,7 @@ const VideoPlayer = ({ videosList }) => {
     if (currentVideo) {
       const options = {
         id: getVimeoId(currentVideo),
-        controls: true,
+        controls: false,
         width: 900,
         autoplay: true,
       }
@@ -121,18 +121,24 @@ const VideoPlayer = ({ videosList }) => {
         player.current.off('loaded', onLoaded);
     });
     }
-  }, [currentVideo, next, changeVideo]);
+  }, [currentVideo, next, changeVideo, dispatch]);
 
   function getVimeoId({uri}) {
     return uri.split('/videos/')[1];
   }
-  
+
   return (
     <>
-      <VideoContainer fullscreen={fullscreen} >
+      <VideoContainer
+        fullscreen={fullscreen}
+        ref={videoRef}
+      >
         <Controls />
         {currentVideo && (
-          <Video id='video' fullscreen={fullscreen} />
+          <Video
+            id='video'
+            fullscreen={fullscreen}
+          />
         )}
       </VideoContainer>
       <Buttons setRandomPlaylist={setRandomPlaylist} next={next} />

@@ -6,6 +6,7 @@ export const PlayerProvider = ({children}) => {
     playing: true,
     fullscreen: false,
     currentVideoId: '',
+    showOverlay: false,
     playlist: [],
   };
   const reducer = (state, action) => {
@@ -13,8 +14,11 @@ export const PlayerProvider = ({children}) => {
       case 'PLAY': return {...state, playing: true};
       case 'PAUSE': return {...state, playing: false};
       case 'SET_FULLSCREEN': return {...state, fullscreen: action.payload}
+      case 'TOGGLE_FULLSCREEN': return {...state, fullscreen: !state.fullscreen}
       case 'SET_CURRENT_VIDEO_ID': return {...state, currentVideoId: action.payload}
       case 'SET_PLAYLIST': return {...state, playlist: action.payload}
+      case 'SHOW_VIDEO_OVERLAY': return {...state, showOverlay: true}
+      case 'HIDE_VIDEO_OVERLAY': return {...state, showOverlay: false}
       default: throw new Error('Unexpected action');
     }
   };

@@ -10,6 +10,7 @@ export const VideoContainer = styled.div`
   width: ${({fullscreen}) => fullscreen ? '100vw' : '70vw'};
   background-color: black;
   height: auto;
+  z-index: 999999;
   iframe {
     width: 100% !important;
     background-color: black;
@@ -49,17 +50,29 @@ export const Button = styled.button`
   transition-duration: 0.4s;
 `;
 
-export const ToggleContainer = styled.div`
+export const Overlay = styled.div`
+  background-color: transparent;
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity .5s ease-in-out;
+  user-select: none;
 `;
 
 export const PlayButton = styled(Play)`
   color: ${mainColor};
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
 `;
 
 export const PauseButton = styled(Pause)`
   color: ${mainColor};
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
 `;
