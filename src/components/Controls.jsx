@@ -25,7 +25,6 @@ const Controls = () => {
   }, [showOverlay, dispatch]);
 
   const showVideoOverlay = useCallback(() => {
-    console.log('onMouseMove')
     dispatch({ type: 'SHOW_VIDEO_OVERLAY' })
   }, [dispatch]);
 

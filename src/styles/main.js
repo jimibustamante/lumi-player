@@ -13,15 +13,31 @@ export const VideoContainer = styled.div`
   z-index: 999999;
   iframe {
     width: 100% !important;
-    background-color: black;
+    background-color: transparent;
+    /* background-color: black; */
   }
 `;
 
 export const Video = styled.div`
   width: 100%;
   iframe {
+    background-color: transparent;
     width: ${({fullscreen}) => fullscreen ? '100vw !important' : 'inherit'};
     ${({fullscreen}) => fullscreen ? 'height: 100vh !important' : ''};
+  }
+`;
+
+export const AdvVideo = styled.div`
+  iframe {
+    position: absolute;
+    background-color: transparent;
+    width: 50vw !important;
+    height: 50vh;
+    z-index: ${({ advRunning }) => advRunning ? '9999999' : '-1'};
+    opacity: ${({ advRunning }) => advRunning ? '1' : '0'};
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
   }
 `;
 

@@ -5,24 +5,11 @@ import {
   Video,
   List,
   ListElement,
-  Button,
 } from '../styles/main';
+import Advertisements from './Advertisements';
 import Controls from './Controls';
+import Buttons from './Buttons';
 import { usePlayer } from '../contexts/player-context';
-const Buttons = ({setRandomPlaylist, next}) => {
-  const [playerState, dispatch] = usePlayer();
-
-  const goFullscreen = useCallback(() => {
-    dispatch({ type: 'SET_FULLSCREEN', payload: true})
-  }, [dispatch]);
-  return (
-    <>
-      <Button onClick={goFullscreen}>Fullscreen!</Button>
-      <Button onClick={next}>Next</Button>
-      <Button onClick={setRandomPlaylist}>Random</Button>
-    </>
-  )
-}
 
 const VideoPlayer = ({ videosList }) => {
   const player = useRef(null);
@@ -31,6 +18,7 @@ const VideoPlayer = ({ videosList }) => {
   const [playerState, dispatch] = usePlayer();
   const { playing, fullscreen, currentVideoId } = playerState;
   const [currentVideo, setCurrentVideo] = useState(null);
+  const [loaded, setLoaded] = useState(null);
   const setRandomPlaylist = useCallback(() => {
     const list = Object.assign([], videosList);
     playlist.current = list.sort(() => Math.random() - 0.5);
@@ -40,99 +28,120 @@ const VideoPlayer = ({ videosList }) => {
 
   const next = useCallback(async () => {
     console.log('next')
-    await player.current.pause();
     const currentIndex = playlist.current.indexOf(playlist.current.find(v => v.uri === currentVideoId));
     console.log({currentIndex})
     let nextVideo = playlist.current[currentIndex + 1]
-    console.log({nextVideo: nextVideo.name})
     if (!nextVideo) {
       nextVideo = playlist.current[0];
     }
     dispatch({ type: 'SET_CURRENT_VIDEO_ID', payload: nextVideo.uri})
   }, [playlist, currentVideoId, dispatch]);
 
-  const onVideoChange = useCallback(() => {
-    console.log('onVideoChange', currentVideoId)
-    if (!currentVideo || (currentVideo.uri !== currentVideoId)) {
-      const newVideo = playlist.current.find(v => v.uri === currentVideoId)
+  const onVideoChange = useCallback((newId) => {
+    if (!currentVideo || (currentVideo.uri !== newId)) {
+      const newVideo = playlist.current.find(v => v.uri === newId)
       if (newVideo) setCurrentVideo(newVideo);
     }
-  }, [currentVideo, currentVideoId, playlist]);
+  }, [currentVideo, playlist]);
 
   const changeVideo = useCallback(async () => {
-    console.log({changeVideo: currentVideo.name})
-    console.log({player: player.current});
+    console.log('A', {loaded})
+    if (!loaded) return;
     const currentId = await player.current.getVideoId();
+    console.log({currentId, currentVideoId: getVimeoId(currentVideo)})
     if (currentId === getVimeoId(currentVideo)) return;
-    await player.current.pause();
     await player.current.unload();
     await player.current.loadVideo(getVimeoId(currentVideo));    
-  }, [player, currentVideo]);
+    // setLoaded(false);
+    console.log('B')
+
+  }, [player, currentVideo, loaded]);
 
   useEffect(() => {
-    onVideoChange();
-  }, [onVideoChange, currentVideoId]);
+    if (currentVideoId !== currentVideo?.uri) {
+      console.log('currentVideoId change', {currentVideoId})
+      onVideoChange(currentVideoId);
+    }
+  }, [onVideoChange, currentVideoId, currentVideo]);
 
   useEffect(() => {
     setRandomPlaylist();
   }, [setRandomPlaylist]);
 
   useEffect(() => {
-    if (player.current) {
+    if (player.current && loaded) {
       if (playing) player.current.play();
       if (!playing) player.current.pause();
     }
-  }, [playing]);
+  }, [playing, loaded]);
+
+  const onEnded = useCallback((data) => {
+    console.log('ended')
+    setTimeout(() => {
+      next();
+    }, 100);
+  }, [next]);
+
+  const onPlaying = useCallback(() => {
+    if (loaded) {
+      dispatch({type: 'PLAY'});
+    }
+  }, [dispatch, loaded])
+
+  const onPause = useCallback(() => {
+    if (loaded) {
+      dispatch({type: 'PAUSE'});
+    }
+  }, [dispatch, loaded]);
+
+  const onLoaded = useCallback(async () => {
+    console.log('loaded')
+    setLoaded(true);
+  }, []);
 
   useEffect(() => {
     if (currentVideo) {
-      const options = {
-        id: getVimeoId(currentVideo),
-        controls: false,
-        width: 900,
-        autoplay: true,
-      }
       if (!player.current) {
+        const options = {
+          id: getVimeoId(currentVideo),
+          autopause: false,
+          controls: false,
+          width: 900,
+          portrait: true,
+          autoplay: true,
+        }
         player.current = new Vimeo('video', options);
+        player.current.on('ended', onEnded);
+        player.current.on('playing', onPlaying);
+        player.current.on('pause', onPause);
+        player.current.on('loaded', onLoaded);
+        player.current.ready().then(() => {
+          player.current.play();
+        });
       } else {
-        changeVideo();
+          changeVideo();
+        // setTimeout(() => {
+        // }, 500);
       }
-      const onEnded = (data) => {
-        console.log('ended')
-        next();
-      };
-      const onPlaying = () => {
-        dispatch({type: 'PLAY'});
-      }
-      const onPause = () => {
-        dispatch({type: 'PAUSE'});
-      }
-      const onLoaded = () => {
-        player.current.play();
-      }
-      player.current.on('ended', onEnded);
-      player.current.on('playing', onPlaying);
-      player.current.on('pause', onPause);
-      player.current.on('loaded', onLoaded);
       return (() => {
-        player.current.off('ended', onEnded);
-        player.current.off('playing', onPlaying);
-        player.current.off('pause', onPause);
-        player.current.off('loaded', onLoaded);
-    });
+        // player.current.off('ended', onEnded);
+        // player.current.off('playing', onPlaying);
+        // player.current.off('pause', onPause);
+        // player.current.off('loaded', onLoaded);
+      });
     }
-  }, [currentVideo, next, changeVideo, dispatch]);
+  }, [currentVideo, next, changeVideo, dispatch, onEnded, onPlaying, onPause, onLoaded]);
 
   function getVimeoId({uri}) {
     return uri.split('/videos/')[1];
   }
-
   return (
     <>
       <VideoContainer
         fullscreen={fullscreen}
         ref={videoRef}
       >
+        <Advertisements />
         <Controls />
         {currentVideo && (
           <Video

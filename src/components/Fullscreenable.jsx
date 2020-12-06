@@ -12,14 +12,17 @@ const Fullscreenable = ({ children }) => {
         await fullscreenContent.current.requestFullscreen();
       } catch (error) {
         console.log({error});
-        alert("Your browser doesn't support fullscreen :(");
       }
     };
   }, [fullscreenContent]);
 
   const exitFullscreen = useCallback(() => {
-    if (fullscreenContent.current && document.fullscreenElement) {
-      document.exitFullscreen();
+    try {
+      if (fullscreenContent.current && document?.fullscreenElement) {
+        document.exitFullscreen();
+      }
+    } catch (error) {
+      console.log({error});
     }
   }, [fullscreenContent]);
 
@@ -36,7 +39,7 @@ const Fullscreenable = ({ children }) => {
     if (fullscreenContent.current) {
       fullscreenContent.current.addEventListener('fullscreenchange', onFullscreenChange, false);
       return (() => {
-        fullscreenContent.current.removeEventListener('fullscreenchange', onFullscreenChange, false);
+        fullscreenContent.current && fullscreenContent.current.removeEventListener('fullscreenchange', onFullscreenChange, false);
       })
     }
   }, [fullscreenContent, dispatch, onFullscreenChange]);
@@ -50,7 +53,7 @@ const Fullscreenable = ({ children }) => {
   }, [fullscreen, goFullscreen, exitFullscreen]);
 
   return (
-    <div ref={fullscreenContent}>
+    <div style={{position: 'relative'}} ref={fullscreenContent}>
       {children}
     </div>
   )

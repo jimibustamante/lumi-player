@@ -3,12 +3,20 @@ const PlayerContext = createContext();
 
 export const PlayerProvider = ({children}) => {
   const initialState = {
+    // Vimeo Player
     playing: true,
     fullscreen: false,
     currentVideoId: '',
-    showOverlay: false,
     playlist: [],
+
+    // Overlay
+    showOverlay: false,
+    
+    // Advs
+    advsList: [],
+    advRunning: false,
   };
+
   const reducer = (state, action) => {
     switch (action.type) {
       case 'PLAY': return {...state, playing: true};
@@ -19,6 +27,8 @@ export const PlayerProvider = ({children}) => {
       case 'SET_PLAYLIST': return {...state, playlist: action.payload}
       case 'SHOW_VIDEO_OVERLAY': return {...state, showOverlay: true}
       case 'HIDE_VIDEO_OVERLAY': return {...state, showOverlay: false}
+      case 'SET_ADVS_LIST': return {...state, advsList: action.payload}
+      case 'SET_ADV_RUNNING': return {...state, advRunning: action.payload}
       default: throw new Error('Unexpected action');
     }
   };
