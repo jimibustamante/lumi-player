@@ -11,7 +11,7 @@ const Fullscreenable = ({ children }) => {
       try {
         await fullscreenContent.current.requestFullscreen();
       } catch (error) {
-        console.log({error});
+        console.error({error});
       }
     };
   }, [fullscreenContent]);
@@ -22,7 +22,7 @@ const Fullscreenable = ({ children }) => {
         document.exitFullscreen();
       }
     } catch (error) {
-      console.log({error});
+      console.error({error});
     }
   }, [fullscreenContent]);
 

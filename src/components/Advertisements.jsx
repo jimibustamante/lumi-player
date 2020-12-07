@@ -21,7 +21,6 @@ const Advs = () => {
 
   };
 
-  // console.log({advsVideos, currentAdv});
   return ( currentAdv ?
     <AdvVideo video={currentAdv} onEnded={onVideoEnded} />
     :

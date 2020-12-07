@@ -16,7 +16,6 @@ const AdvPlayer = ({ video, onEnded }) => {
   }
 
   const onTimeUpdate = useCallback(({ seconds }) => {
-    console.log({seconds})
     if (seconds >= RUNNING_TIME) {
       player.current.unload();
       dispatch({ type: 'SET_ADV_RUNNING', payload: false});
@@ -39,7 +38,6 @@ const AdvPlayer = ({ video, onEnded }) => {
       }
       player.current = new Vimeo('adv-video', options);
       player.current.ready(() => {
-        console.log('ready');
         player.current.play();
       })
       player.current.on('ended', onEnded);
