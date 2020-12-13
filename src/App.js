@@ -20,6 +20,7 @@ const App = () => {
     getVideos();
   }, [getVideos]);
 
+  
   return (
     <PlayerProvider>
       <div className="App">

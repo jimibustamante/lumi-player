@@ -17,10 +17,11 @@ const AdvPlayer = ({ video, onEnded }) => {
 
   const onTimeUpdate = useCallback(({ seconds }) => {
     if (seconds >= RUNNING_TIME) {
+      onEnded();
       player.current.unload();
       dispatch({ type: 'SET_ADV_RUNNING', payload: false});
     }
-  }, [dispatch]);
+  }, [dispatch, onEnded]);
 
   const onLoaded = () => {
     
@@ -42,14 +43,7 @@ const AdvPlayer = ({ video, onEnded }) => {
       })
       player.current.on('ended', onEnded);
       player.current.on('timeupdate', onTimeUpdate);
-      // player.current.on('pause', onPause);
       player.current.on('loaded', onLoaded);
-      return (() => {
-        player.current.off('ended');
-        // player.current.off('timeupdate');
-        // player.current.off('pause', onPause);
-        player.current.off('loaded');
-      });
     }
   }, [video, onTimeUpdate, onEnded]);
 

@@ -1,7 +1,11 @@
 import React, { useReducer, useContext, createContext } from 'react';
+import qs from 'query-string';
 const PlayerContext = createContext();
 
 export const PlayerProvider = ({children}) => {
+  const searchParams = qs.parseUrl(window.location.href).query;
+  const { advListId, storeName } = searchParams;
+
   const initialState = {
     // Vimeo Player
     playing: true,
@@ -15,6 +19,9 @@ export const PlayerProvider = ({children}) => {
     // Advs
     advsList: [],
     advRunning: false,
+    advListId,
+    
+    storeName,
   };
 
   const reducer = (state, action) => {

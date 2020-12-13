@@ -26,10 +26,11 @@ export default class LumiApi {
     }
   }
 
-  getAdvsVideos = async () => {
+  getAdvsVideos = async (advListId) => {
+    advListId = advListId || ADV_FOLDER_ID;
     try {
       let response = await window.fetch(
-        `https://api.vimeo.com/users/${USER_ID}/projects/${ADV_FOLDER_ID}/videos`,
+        `https://api.vimeo.com/users/${USER_ID}/projects/${advListId}/videos`,
         {
           method: 'GET',
           headers: {
