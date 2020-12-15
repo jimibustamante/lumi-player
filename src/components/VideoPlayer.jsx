@@ -3,8 +3,8 @@ import Vimeo from '@vimeo/player';
 import {
   VideoContainer,
   Video,
-  List,
-  ListElement,
+  // List,
+  // ListElement,
 } from '../styles/main';
 import Advertisements from './Advertisements';
 import Controls from './Controls';
@@ -98,10 +98,9 @@ const VideoPlayer = ({ videosList }) => {
             fullscreen={fullscreen}
           />
         )}
-        {/* <img src={} /> */}
       </VideoContainer>
       <Buttons setRandomPlaylist={setRandomPlaylist} next={next.current} />
-      {playlist.current && (
+      {/* {playlist.current && (
         <List>
           {playlist.current.map((video) => {
             return (
@@ -109,7 +108,7 @@ const VideoPlayer = ({ videosList }) => {
             )
           })}
         </List>
-      )}
+      )} */}
     </>
   )
 };

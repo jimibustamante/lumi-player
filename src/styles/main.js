@@ -1,20 +1,34 @@
 import styled from 'styled-components';
 import { BiPlay as Play, BiPause as Pause } from 'react-icons/bi';
-const mainColor = '#4CAF50';
+const mainColor = 'white';
+const textColor = 'black'
+
+export const AppContainer = styled.div`
+  background-color: black;
+`;
+
+export const HeaderContainer = styled.div`
+  width: 100vw;
+  height: auto;
+  padding: 2rem 0;
+  img {
+    width: 30%;
+    max-width: 300px;
+  }
+`;
 
 export const VideoContainer = styled.div`
   position: relative;
   display: flex;
-  margin: ${({fullscreen}) => fullscreen ? '0' : '2rem auto'};
+  margin: ${({fullscreen}) => fullscreen ? '0' : '0 auto'};
   justify-content: center;
-  width: ${({fullscreen}) => fullscreen ? '100vw' : '70vw'};
+  width: ${({fullscreen}) => fullscreen ? '100vw' : '50vw'};
   background-color: black;
   height: auto;
   z-index: 999999;
   iframe {
     width: 100% !important;
     background-color: transparent;
-    /* background-color: black; */
   }
 `;
 
@@ -33,7 +47,7 @@ export const AdvVideo = styled.div`
     background-color: transparent;
     width: 50vw !important;
     height: 50vh;
-    z-index: ${({ advRunning }) => advRunning ? '9999999' : '-1'};
+    z-index: ${({ advRunning }) => advRunning ? '100' : '-1'};
     opacity: ${({ advRunning }) => advRunning ? '1' : '0'};
     left: 50%;
     top: 50%;
@@ -54,7 +68,6 @@ export const ListElement = styled.li`
 export const Button = styled.button`
   background-color: ${mainColor}; /* Green */
   border: none;
-  color: white;
   padding: 15px 32px;
   text-align: center;
   text-decoration: none;
@@ -62,7 +75,7 @@ export const Button = styled.button`
   font-size: 16px;
   margin: 0 1rem;
   box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
-  color: white;
+  color: ${textColor};
   transition-duration: 0.4s;
 `;
 
@@ -91,4 +104,13 @@ export const PauseButton = styled(Pause)`
   transform: translate(-50%, -50%);
   top: 50%;
   left: 50%;
+`;
+
+export const FullscreenLogo = styled.img`
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  width: 300px;
+  height: auto;
+  z-index: 9999999;
 `;

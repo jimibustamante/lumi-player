@@ -1,11 +1,22 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { usePlayer } from '../contexts/player-context';
-
+import { FullscreenLogo } from '../styles/main';
+import Barbanegra from '../assets/images/logo_barbanegra_white.png'
+import Barbazul from '../assets/images/logo_barbazul_white.png'
 const Fullscreenable = ({ children }) => {
   const fullscreenContent = useRef();
   const [playerState, dispatch] = usePlayer();
-  const {fullscreen} = playerState;
-
+  const { fullscreen, storeName } = playerState;
+  const src = () => {
+    switch (storeName) {
+      case 'barbazul':
+        return Barbazul;
+      case 'barbanegra':
+        return Barbanegra;
+      default:
+        return Barbazul;
+    }
+  }
   const goFullscreen = useCallback(async () => {
     if (fullscreenContent.current) {
       try {
@@ -54,6 +65,9 @@ const Fullscreenable = ({ children }) => {
 
   return (
     <div style={{position: 'relative'}} ref={fullscreenContent}>
+      {fullscreen && (
+        <FullscreenLogo src={src()} alt='' />
+      )}
       {children}
     </div>
   )

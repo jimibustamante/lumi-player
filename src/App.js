@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'react-router-dom';
 import VideoPlayer from './components/VideoPlayer';
+import Header from './components/Header';
 import Fullscreenable from './components/Fullscreenable';
 import { PlayerProvider } from './contexts/player-context';
+import { AppContainer } from './styles/main';
 import './App.css';
 
 const App = () => {
@@ -23,13 +25,14 @@ const App = () => {
   
   return (
     <PlayerProvider>
-      <div className="App">
+      <AppContainer className="App">
+        <Header />
         <Fullscreenable>
           {videos.length &&(
             <VideoPlayer videosList={videos} />
           )}
         </Fullscreenable>
-      </div>
+      </AppContainer>
     </PlayerProvider>
   );
 }
