@@ -4,7 +4,7 @@ const PlayerContext = createContext();
 
 export const PlayerProvider = ({children}) => {
   const searchParams = qs.parseUrl(window.location.href).query;
-  const { advListId, storeName } = searchParams;
+  const { adv_list_id: advListId, store: storeName } = searchParams;
 
   const initialState = {
     // Vimeo Player
@@ -20,7 +20,8 @@ export const PlayerProvider = ({children}) => {
     advsList: [],
     advRunning: false,
     advListId,
-    
+    currentAdvId: null,
+
     storeName,
   };
 
@@ -36,6 +37,7 @@ export const PlayerProvider = ({children}) => {
       case 'HIDE_VIDEO_OVERLAY': return {...state, showOverlay: false}
       case 'SET_ADVS_LIST': return {...state, advsList: action.payload}
       case 'SET_ADV_RUNNING': return {...state, advRunning: action.payload}
+      case 'SET_CURRENT_ADV_ID': return {...state, currentAdvId: action.payload}
       default: throw new Error('Unexpected action');
     }
   };

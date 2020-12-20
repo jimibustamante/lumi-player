@@ -10,7 +10,6 @@ const AdvPlayer = ({ video, onEnded }) => {
   const videoRef = useRef(null);
   const [playerState, dispatch] = usePlayer();
   const { advRunning } = playerState;
-
   function getVimeoId({uri}) {
     return uri.split('/videos/')[1];
   }
@@ -23,6 +22,11 @@ const AdvPlayer = ({ video, onEnded }) => {
     }
   }, [dispatch, onEnded]);
 
+  useEffect(() => {
+    if (!player.current) return; 
+    player.current.loadVideo(getVimeoId(video));
+  }, [video])
+
   const onLoaded = () => {
     
   }
@@ -33,7 +37,6 @@ const AdvPlayer = ({ video, onEnded }) => {
         id: getVimeoId(video),
         controls: false,
         autopause: false,
-        // width: 900,
         muted: true,
         autoplay: false,
       }

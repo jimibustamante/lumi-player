@@ -45,8 +45,8 @@ export const AdvVideo = styled.div`
   iframe {
     position: absolute;
     background-color: transparent;
-    width: 50vw !important;
-    height: 50vh;
+    width: 100% !important;
+    height: 100%;
     z-index: ${({ advRunning }) => advRunning ? '100' : '-1'};
     opacity: ${({ advRunning }) => advRunning ? '1' : '0'};
     left: 50%;

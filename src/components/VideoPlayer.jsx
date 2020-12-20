@@ -20,7 +20,7 @@ const VideoPlayer = ({ videosList }) => {
   const { playing, fullscreen, currentVideoId } = playerState;
   const [loaded, setLoaded] = useState(null);
   const next = useRef(null)
-  console.log({playerState})
+
   const setRandomPlaylist = useCallback(() => {
     const list = Object.assign([], videosList);
     playlist.current = list.sort(() => Math.random() - 0.5);
