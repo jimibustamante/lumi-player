@@ -99,7 +99,7 @@ const VideoPlayer = ({ videosList }) => {
           />
         )}
       </VideoContainer>
-      <Buttons setRandomPlaylist={setRandomPlaylist} next={next.current} />
+      {/* <Buttons setRandomPlaylist={setRandomPlaylist} next={next.current} /> */}
       {/* {playlist.current && (
         <List>
           {playlist.current.map((video) => {
