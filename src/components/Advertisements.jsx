@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import AdvVideo from './AdvPlayer';
 import { usePlayer } from '../contexts/player-context';
 
-const ADV_FREQUENCY = 30000;
+const ADV_FREQUENCY = 15000;
 
 const Advs = () => {
   const [advsVideos, setAdvsVideos] = useState([]);

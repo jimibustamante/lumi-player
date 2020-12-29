@@ -8,7 +8,7 @@ import {
 } from '../styles/main';
 import Advertisements from './Advertisements';
 import Controls from './Controls';
-import Buttons from './Buttons';
+// import Buttons from './Buttons';
 import { usePlayer } from '../contexts/player-context';
 
 const VideoPlayer = ({ videosList }) => {
