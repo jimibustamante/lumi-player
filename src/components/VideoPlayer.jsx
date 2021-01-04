@@ -53,10 +53,15 @@ const VideoPlayer = ({ videosList }) => {
 
   useEffect(() => {
     if (player.current && loaded) {
-      if (playing) player.current.play();
+      try {
+        if (playing) player.current.play();
+      } catch (error) {
+        console.error({error});
+        dispatch({type: 'PAUSE'});
+      }
       if (!playing) player.current.pause();
     }
-  }, [playing, loaded]);
+  }, [playing, loaded, dispatch]);
 
   useEffect(() => {
     if (currentVideo.current && currentVideo.current.uri) {
@@ -75,7 +80,12 @@ const VideoPlayer = ({ videosList }) => {
         player.current.on('pause', () => loaded && dispatch({type: 'PAUSE'}));
         player.current.on('loaded', () => setLoaded(true));
         player.current.ready().then(() => {
-          player.current.play();
+          try {
+            player.current.play();
+          } catch (error) {
+            console.error({error});
+            dispatch({type: 'PAUSE'});
+          }
         });
       }
     }
