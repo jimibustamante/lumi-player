@@ -1,6 +1,6 @@
 import React from 'react';
 import { usePlayer } from '../contexts/player-context';
-import Barbanegra from '../assets/images/logo_barbanegra_white.png'
+import Barbanegra from '../assets/images/logo_barbanegra_yellow.png'
 import Barbazul from '../assets/images/logo_barbazul_white.png'
 import { HeaderContainer } from '../styles/main';
 

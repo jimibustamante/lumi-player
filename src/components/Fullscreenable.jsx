@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { usePlayer } from '../contexts/player-context';
 import { FullscreenLogo } from '../styles/main';
-import Barbanegra from '../assets/images/logo_barbanegra_white.png'
+import Barbanegra from '../assets/images/logo_barbanegra_yellow.png'
 import Barbazul from '../assets/images/logo_barbazul_white.png'
 const Fullscreenable = ({ children }) => {
   const fullscreenContent = useRef();

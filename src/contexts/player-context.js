@@ -5,7 +5,6 @@ const PlayerContext = createContext();
 export const PlayerProvider = ({children}) => {
   const searchParams = qs.parseUrl(window.location.href).query;
   const { adv_list_id: advListId, store: storeName } = searchParams;
-
   const initialState = {
     // Vimeo Player
     playing: true,

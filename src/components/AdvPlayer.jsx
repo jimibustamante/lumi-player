@@ -14,18 +14,24 @@ const AdvPlayer = ({ video, onEnded }) => {
     return uri.split('/videos/')[1];
   }
 
-  const onTimeUpdate = useCallback(({ seconds }) => {
-    if (seconds >= RUNNING_TIME) {
-      onEnded();
-      player.current.unload();
-      dispatch({ type: 'SET_ADV_RUNNING', payload: false});
-    }
-  }, [dispatch, onEnded]);
+  const onAdvEnded = useCallback(() => {
+    onEnded();
+    player.current.unload();
+    dispatch({ type: 'SET_ADV_RUNNING', payload: false});
+  }, [onEnded, dispatch]);
+
+  // const onTimeUpdate = useCallback(({ seconds }) => {
+  //   if (seconds >= RUNNING_TIME) {
+  //     onEnded();
+  //     player.current.unload();
+  //     dispatch({ type: 'SET_ADV_RUNNING', payload: false});
+  //   }
+  // }, [dispatch, onEnded]);
 
   useEffect(() => {
     if (!player.current) return; 
     player.current.loadVideo(getVimeoId(video));
-  }, [video])
+  }, [video]);
 
   const onLoaded = () => {
     
@@ -44,11 +50,11 @@ const AdvPlayer = ({ video, onEnded }) => {
       player.current.ready(() => {
         player.current.play();
       })
-      player.current.on('ended', onEnded);
-      player.current.on('timeupdate', onTimeUpdate);
+      player.current.on('ended', onAdvEnded);
+      // player.current.on('timeupdate', onTimeUpdate);
       player.current.on('loaded', onLoaded);
     }
-  }, [video, onTimeUpdate, onEnded]);
+  }, [video, onAdvEnded]);
 
   useEffect(() => {
     if (advRunning) {
