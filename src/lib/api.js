@@ -5,13 +5,19 @@ const ADV_FOLDER_ID = process.env.REACT_APP_ADV_FOLDER_ID;
 export default class LumiApi {
   constructor() {
     this.accessToken = ACCESS_TOKEN;
+    this.page = 1;
+    this.per_page = 5;
+  }
+
+  resetPage = () => {
+    this.page = 1;
   }
 
   getFolderVideos = async (folderId) => {
     folderId = folderId || '3257320';
     try {
       let response = await window.fetch(
-        `https://api.vimeo.com/users/${USER_ID}/projects/${folderId}/videos`,
+        `https://api.vimeo.com/users/${USER_ID}/projects/${folderId}/videos?page=${this.page}&per_page=${this.per_page}`,
         {
           method: 'GET',
           headers: {
@@ -20,9 +26,11 @@ export default class LumiApi {
         },
       );
       response = await response.json();
-      return response.data;
+      console.log({videos: response});
+      this.page += 1;
+      return response;
     } catch (error) {
-      alert(error.message);
+      console.error(error);
     }
   }
 
@@ -41,7 +49,7 @@ export default class LumiApi {
       response = await response.json();
       return response.data;
     } catch (error) {
-      alert(error.message);
+      console.log(error);
     }
   }
 }

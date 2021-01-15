@@ -58,6 +58,7 @@ export const AdvVideo = styled.div`
 export const List = styled.ul`
   list-style: none;
   margin: 3rem 0;
+  color: gray;
 `;
 export const ListElement = styled.li`
   ${({isPlaying}) => (

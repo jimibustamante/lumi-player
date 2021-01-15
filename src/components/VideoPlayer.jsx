@@ -24,9 +24,11 @@ const VideoPlayer = ({ videosList }) => {
   const setRandomPlaylist = useCallback(() => {
     const list = Object.assign([], videosList);
     playlist.current = list.sort(() => Math.random() - 0.5);
-    dispatch({ type: 'SET_PLAYLIST', payload: playlist.current});
-    dispatch({ type: 'SET_CURRENT_VIDEO_ID', payload: playlist.current[0].uri});
-    currentVideo.current = playlist.current[0];
+    dispatch({ type: 'SET_PLAYLIST', payload: videosList});
+    if (!currentVideo.current) {
+      dispatch({ type: 'SET_CURRENT_VIDEO_ID', payload: videosList[0].uri});
+      currentVideo.current = videosList[0];
+    } 
   }, [videosList, playlist, dispatch]);
 
   const changeVideo = useCallback(async (newVideo) => {
@@ -109,8 +111,8 @@ const VideoPlayer = ({ videosList }) => {
           />
         )}
       </VideoContainer>
-      {/* <Buttons setRandomPlaylist={setRandomPlaylist} next={next.current} /> */}
-      {/* {playlist.current && (
+      {/* <Buttons setRandomPlaylist={setRandomPlaylist} next={next.current} />
+      {playlist.current && (
         <List>
           {playlist.current.map((video) => {
             return (
